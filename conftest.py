@@ -1,11 +1,11 @@
-import pytest
 from selenium import webdriver
 from pages.login_page import LoginPage
 from selenium.webdriver.chrome.options import Options
-
-import pathlib
 from datetime import datetime
+import pathlib
 import time
+import pytest
+import pytest_html
 
 target = pathlib.Path("reports/screens")
 target.mkdir(parents=True, exist_ok=True)
@@ -50,3 +50,8 @@ def pytest_runtest_makereport(item,call):
             timestamp_unix = int(time.time())
             file_name= target / f"{report.when}_{item.name}_{timestamp_unix}.png"
             driver.save_screenshot(str(file_name))
+            
+            if hasattr(report, "extra"):
+                report.extra.append(
+                    pytest_html.extras.image(str(file_name))
+                )
